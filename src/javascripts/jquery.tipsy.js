@@ -1,8 +1,13 @@
-// tipsy, facebook style tooltips for jquery
-// version 1.0.0a
-// (c) 2008-2010 jason frame [jason@onehackoranother.com]
-// released under the MIT license
-
+/**
+ * tipsy, facebook style tooltips for jquery
+ * version 1.0.1
+ * 
+ * (c) 2008-2010 jason frame [jason@onehackoranother.com]
+ * Contributions from gavin.b.lynch@gmail.com:
+ *    - Adding attachTo property
+ *
+ * released under the MIT license
+ */
 (function($) {
   function maybeCall(thing, ctx) {
     return (typeof thing == 'function') ? (thing.call(ctx)) : thing;
@@ -10,7 +15,9 @@
 
   function isElementInDOM(ele) {
     while (ele = ele.parentNode) {
-      if (ele == document) return true;
+      if (ele == document) {
+        return true;
+      }
     }
 
     return false;
@@ -30,14 +37,21 @@
       if (title && this.enabled) {
         var $tip = this.tip();
         var format = this.options.html ? 'html' : 'text';
+        var offset;
+
+        if (this.options.attachTo === document.body) {
+          offset = this.$element.offset();
+        } else {
+          offset = this.$element.position();
+        }
 
         $tip.find('.tipsy-inner')[format](title);
         // reset classname in case of dynamic gravity
         $tip[0].className = 'tipsy';
         $tip.css({top: 0, left: 0, visibility: 'hidden', display: 'block'});
-        $tip.remove().prependTo(document.body);
+        $tip.detach().prependTo(this.options.attachTo);
 
-        var pos = $.extend({}, this.$element.offset(), {
+        var pos = $.extend({}, offset, {
           width: this.$element[0].offsetWidth,
           height: this.$element[0].offsetHeight
         });
@@ -55,13 +69,22 @@
           };
           break;
         case 's':
-          tp = {top: pos.top - actualHeight - this.options.offset, left: pos.left + pos.width / 2 - actualWidth / 2};
+          tp = {
+            top: pos.top - actualHeight - this.options.offset,
+            left: pos.left + pos.width / 2 - actualWidth / 2
+          };
           break;
         case 'e':
-          tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left - actualWidth - this.options.offset};
-        break;
+          tp = {
+            top: pos.top + pos.height / 2 - actualHeight / 2,
+            left: pos.left - actualWidth - this.options.offset
+          };
+          break;
         case 'w':
-          tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left + pos.width + this.options.offset};
+          tp = {
+            top: pos.top + pos.height / 2 - actualHeight / 2,
+            left: pos.left + pos.width + this.options.offset
+          };
           break;
         }
 
@@ -81,7 +104,8 @@
         }
 
         if (this.options.fade) {
-          $tip.stop().css({opacity: 0, display: 'block', visibility: 'visible'}).animate({opacity: this.options.opacity});
+          $tip.stop().css({opacity: 0, display: 'block', visibility: 'visible'});
+          $tip.animate({opacity: this.options.opacity});
         } else {
           $tip.css({visibility: 'visible', opacity: this.options.opacity});
         }
@@ -227,7 +251,8 @@
     offset: 0,
     opacity: 0.8,
     title: 'title',
-    trigger: 'hover'
+    trigger: 'hover',
+    attachTo: document.body
   };
 
   $.fn.tipsy.revalidate = function () {
