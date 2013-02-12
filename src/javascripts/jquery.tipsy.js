@@ -97,8 +97,18 @@
           }
         }
 
+        var $arrow = $tip.find('.tipsy-arrow');
+        var arrowPos;
+
         $tip.css(tp).addClass('tipsy-' + gravity);
-        $tip.find('.tipsy-arrow')[0].className = 'tipsy-arrow tipsy-arrow-' + gravity.charAt(0);
+        $arrow.css('left', '').css('top', '');
+        $arrow[0].className = 'tipsy-arrow tipsy-arrow-' + gravity.charAt(0);
+        arrowPos = $arrow.position();
+
+        $arrow.css({
+          top: arrowPos.top + this.options.gravityOffset.top,
+          left: arrowPos.left + this.options.gravityOffset.left
+        });
 
         if (this.options.className) {
           $tip.addClass(maybeCall(this.options.className, this.$element[0]));
@@ -253,7 +263,8 @@
     opacity: 0.8,
     title: 'title',
     trigger: 'hover',
-    attachTo: 'document'
+    attachTo: 'document',
+    gravityOffset: {left: 0, top: 0}
   };
 
   $.fn.tipsy.revalidate = function () {
