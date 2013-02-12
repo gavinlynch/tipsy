@@ -39,8 +39,9 @@
         var format = this.options.html ? 'html' : 'text';
         var offset;
 
-        if (this.options.attachTo === document.body) {
+        if (this.options.attachTo === 'document') {
           offset = this.$element.offset();
+          this.options.attachTo = document.body;
         } else {
           offset = this.$element.position();
         }
@@ -252,7 +253,7 @@
     opacity: 0.8,
     title: 'title',
     trigger: 'hover',
-    attachTo: document.body
+    attachTo: 'document'
   };
 
   $.fn.tipsy.revalidate = function () {
